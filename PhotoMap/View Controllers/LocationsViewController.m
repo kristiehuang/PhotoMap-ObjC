@@ -8,9 +8,10 @@
 
 #import "LocationsViewController.h"
 #import "LocationCell.h"
+#import "PhotoMapViewController.h"
 
-static NSString * const clientID = @"YOUR_CLIENT_ID";
-static NSString * const clientSecret = @"YOUR_CLIENT_SECRET";
+static NSString * const clientID = @"F5FWMQMXCPKTX13L3QAPSMZV0MHHJHSYZREAZDCNTYP11QA4";
+static NSString * const clientSecret = @"H2PQK0B2MQIZCMN11KANODMFW0M5O4QN1P5P2HMAZDJKK4U5";
 
 @interface LocationsViewController () <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate>
 
@@ -42,6 +43,7 @@ static NSString * const clientSecret = @"YOUR_CLIENT_SECRET";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     LocationCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LocationCell" forIndexPath:indexPath];
+    [cell updateWithLocation:self.results[indexPath.row]];
     return cell;
 }
 
@@ -50,6 +52,14 @@ static NSString * const clientSecret = @"YOUR_CLIENT_SECRET";
     NSDictionary *venue = self.results[indexPath.row];
     NSNumber *lat = [venue valueForKeyPath:@"location.lat"];
     NSNumber *lng = [venue valueForKeyPath:@"location.lng"];
+    [self.delegate locationsViewController:self didPickLocationWithLatitude:lat longitude:lng];
+    
+    for (UIViewController * controller in self.navigationController.viewControllers) {
+        if ([controller isKindOfClass:PhotoMapViewController.class]) {
+            [self.navigationController popToViewController:controller animated:YES];
+        }
+    }
+    
     NSLog(@"%@, %@", lat, lng);
 }
 
